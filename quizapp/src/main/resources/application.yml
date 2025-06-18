@@ -1,0 +1,11 @@
+spring:
+  jpa:
+    show-sql: true
+management:
+  endpoints:
+    web:
+      exposure:
+        include: info,env
+  endpoint:
+    env:
+      show-values: always
