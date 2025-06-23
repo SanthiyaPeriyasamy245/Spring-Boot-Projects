@@ -1,5 +1,6 @@
 package com.santhiya.quizapp.controller;
 
+import com.santhiya.quizapp.Dto.QuestionDto;
 import com.santhiya.quizapp.model.Question;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +20,7 @@ public class QuestionController {
     @GetMapping("/questions")
     public ResponseEntity<List<Question>> getQuestions()
     {
+
         return questionService.getAllQuestions();
     }
 
@@ -33,16 +35,16 @@ public class QuestionController {
 
     }
      @PostMapping
-     public ResponseEntity<String>addQuestion( @RequestBody Question question) {
+     public ResponseEntity<String>addQuestion( @RequestBody QuestionDto question) {
        return  questionService.addQuestion(question);
 
     }
     @DeleteMapping
-    public ResponseEntity<String> deleteQuestion(@RequestBody Question question) {
+    public ResponseEntity<String> deleteQuestion(@RequestBody QuestionDto question) {
         return questionService.deleteQuestion(question);
     }
     @PutMapping
-    public ResponseEntity<String> updateQuestion(@RequestBody Question question) {
+    public ResponseEntity<String> updateQuestion(@RequestBody QuestionDto question) {
         return questionService.updateQuestion(question); // Assuming addQuestion can also handle updates
     }
 

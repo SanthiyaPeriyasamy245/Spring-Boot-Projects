@@ -1,23 +1,30 @@
 package com.santhiya.quizapp.service;
 
 
+import com.santhiya.quizapp.Dto.QuestionDto;
 import com.santhiya.quizapp.model.Question;
 import com.santhiya.quizapp.repository.QuestionRepository;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-
+@Slf4j
 @Service
+
 public class QuestionService {
 
    private final QuestionRepository questionRepository;
 
-    public QuestionService(QuestionRepository questionRepository)
-    {
+   private final  ModelMapper modelMapper;
+
+    public QuestionService(QuestionRepository questionRepository, ModelMapper modelMapper) {
         this.questionRepository = questionRepository;
+        this.modelMapper = modelMapper;
     }
 
     public ResponseEntity<List<Question>> getAllQuestions() {
@@ -32,10 +39,13 @@ public class QuestionService {
         return new ResponseEntity<>(new ArrayList<>(), HttpStatus.BAD_REQUEST);
     }
 
-    public ResponseEntity<String> addQuestion(Question question) {
-        try
-        {
-            Question save = questionRepository.save(question);
+    public ResponseEntity<String> addQuestion(QuestionDto question) {
+        try {
+
+            Question user_question = modelMapper.map(question, Question.class);
+            // Convert QuestionDto to Question entity using ModelMapper
+            Question save = questionRepository.save(user_question);
+
         }
         catch (Exception e) {
             e.printStackTrace();
@@ -44,9 +54,11 @@ public class QuestionService {
         return new ResponseEntity<>("Question added successfully", HttpStatus.OK);
     }
 
-    public ResponseEntity<String> deleteQuestion(Question question) {
+    public ResponseEntity<String> deleteQuestion(QuestionDto question) {
         try {
-            questionRepository.delete(question);
+            // Convert QuestionDto to Question entity using ModelMapper
+            Question questionToDelete = modelMapper.map(question, Question.class);
+            questionRepository.delete(questionToDelete);
 
         } catch (Exception e) {
            e.printStackTrace();
@@ -59,10 +71,11 @@ public class QuestionService {
         return new ResponseEntity<>(questionRepository.findByCategory((category)), HttpStatus.OK);
     }
 
-    public ResponseEntity<String> updateQuestion(Question question) {
+    public ResponseEntity<String> updateQuestion(QuestionDto question) {
 
         try {
-            Question updatedQuestion = questionRepository.save(question);
+            Question questionToUpdate = modelMapper.map(question, Question.class);
+            Question updatedQuestion = questionRepository.save(questionToUpdate);
             return new ResponseEntity<>("Question updated successfully", HttpStatus.OK);
         } catch (Exception e) {
             e.printStackTrace();
