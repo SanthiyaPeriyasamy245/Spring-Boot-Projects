@@ -3,7 +3,6 @@ package com.santhiya.quizapp.service;
 
 import com.santhiya.quizapp.model.Question;
 import com.santhiya.quizapp.repository.QuestionRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -14,9 +13,12 @@ import java.util.List;
 @Service
 public class QuestionService {
 
-    @Autowired
-    QuestionRepository questionRepository;
+   private final QuestionRepository questionRepository;
 
+    public QuestionService(QuestionRepository questionRepository)
+    {
+        this.questionRepository = questionRepository;
+    }
 
     public ResponseEntity<List<Question>> getAllQuestions() {
 
