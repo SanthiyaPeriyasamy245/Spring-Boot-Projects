@@ -9,6 +9,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.dao.DataIntegrityViolationException;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -41,6 +44,7 @@ public class QuestionService {
             return questionDtos;
     }
 
+
     public String addQuestion(QuestionDto question) {
         Question user_question = modelMapper.map(question, Question.class);
             // Convert QuestionDto to Question entity using ModelMapper
@@ -71,7 +75,6 @@ public class QuestionService {
         log.info("Updating question with id: {}", id);
         Question existingQuestion = questionRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Question not found with id: " + id));
-
         modelMapper.map(question,existingQuestion);
         questionRepository.save(existingQuestion);
         QuestionDto questionDto = modelMapper.map(existingQuestion, QuestionDto.class);
