@@ -4,18 +4,24 @@ package com.santhiya.quizapp.service;
 import com.santhiya.quizapp.Dto.QuestionDto;
 import com.santhiya.quizapp.model.Question;
 import com.santhiya.quizapp.repository.QuestionRepository;
+import jakarta.persistence.EntityNotFoundException;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.modelmapper.ModelMapper;
+import org.springframework.dao.DataIntegrityViolationException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.ArrayList;
 import java.util.List;
+
 @Slf4j
 @Service
-
 public class QuestionService {
 
    private final QuestionRepository questionRepository;
@@ -27,59 +33,53 @@ public class QuestionService {
         this.modelMapper = modelMapper;
     }
 
-    public ResponseEntity<List<Question>> getAllQuestions() {
+    public List<QuestionDto> getAllQuestions() {
 
-
-        try {
-            return new ResponseEntity<>(questionRepository.findAll(), HttpStatus.OK);
-        }
-        catch (Exception e) {
-            e.printStackTrace();
-        }
-        return new ResponseEntity<>(new ArrayList<>(), HttpStatus.BAD_REQUEST);
+            List<Question> questions=questionRepository.findAll();
+            List<QuestionDto> questionDtos = new ArrayList<>();
+            for(Question question : questions) {
+                QuestionDto questionDto = modelMapper.map(question, QuestionDto.class);
+                questionDtos.add(questionDto);
+            }
+            return questionDtos;
     }
 
-    public ResponseEntity<String> addQuestion(QuestionDto question) {
-        try {
 
-            Question user_question = modelMapper.map(question, Question.class);
+    public String addQuestion(QuestionDto question) {
+        Question user_question = modelMapper.map(question, Question.class);
             // Convert QuestionDto to Question entity using ModelMapper
-            Question save = questionRepository.save(user_question);
-
-        }
-        catch (Exception e) {
-            e.printStackTrace();
-            return new ResponseEntity<>("Failed to add question", HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-        return new ResponseEntity<>("Question added successfully", HttpStatus.OK);
+                Question save = questionRepository.save(user_question);
+                    return "Question added successfully";
     }
 
-    public ResponseEntity<String> deleteQuestion(QuestionDto question) {
-        try {
-            // Convert QuestionDto to Question entity using ModelMapper
-            Question questionToDelete = modelMapper.map(question, Question.class);
-            questionRepository.delete(questionToDelete);
+    public void deleteQuestion(int id) {
+        log.info("Deleting question with id: {}", id);
+        questionRepository.deleteById(id);
+    }
 
-        } catch (Exception e) {
-           e.printStackTrace();
-            return new ResponseEntity<>("Failed to delete question", HttpStatus.INTERNAL_SERVER_ERROR);
+    public List<QuestionDto> getQuestionsByCategory(String category) {
+        log.info("Getting questions by category: {}", category);
+        List<QuestionDto>questionDtos= new ArrayList<QuestionDto>();
+        List<Question> questions = questionRepository.findByCategory(category);
+        for(Question question : questions) {
+            QuestionDto questionDto = modelMapper.map(question, QuestionDto.class);
+            questionDtos.add(questionDto);
         }
-        return new ResponseEntity<>("Question deleted successfully", HttpStatus.OK);
+        if(questionDtos.isEmpty()) {
+            throw new EntityNotFoundException("Question not found");
+        }
+        return questionDtos;
     }
 
-    public ResponseEntity<List<Question>> getQuestionsByCategory(String category) {
-        return new ResponseEntity<>(questionRepository.findByCategory((category)), HttpStatus.OK);
-    }
+    public QuestionDto updateQuestion(int id,QuestionDto question) {
+        log.info("Updating question with id: {}", id);
+        Question existingQuestion = questionRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Question not found with id: " + id));
+        modelMapper.map(question,existingQuestion);
+        questionRepository.save(existingQuestion);
+        QuestionDto questionDto = modelMapper.map(existingQuestion, QuestionDto.class);
+        return questionDto;
 
-    public ResponseEntity<String> updateQuestion(QuestionDto question) {
-
-        try {
-            Question questionToUpdate = modelMapper.map(question, Question.class);
-            Question updatedQuestion = questionRepository.save(questionToUpdate);
-            return new ResponseEntity<>("Question updated successfully", HttpStatus.OK);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return new ResponseEntity<>("Failed to update question", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-}
+
