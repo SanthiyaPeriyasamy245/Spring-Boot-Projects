@@ -1,8 +1,9 @@
 package com.santhiya.quizapp.controller;
 
 import com.santhiya.quizapp.Dto.QuestionDto;
-import com.santhiya.quizapp.model.Question;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import com.santhiya.quizapp.service.QuestionService;
@@ -16,36 +17,35 @@ public class QuestionController {
     @Autowired
     QuestionService questionService;
 
-
     @GetMapping("/questions")
-    public ResponseEntity<List<Question>> getQuestions()
+    public ResponseEntity<List<QuestionDto>> getQuestions()
     {
-
-        return questionService.getAllQuestions();
+        return ResponseEntity.ok(questionService.getAllQuestions());
     }
-
-    // if path variable name and mapping name parameter both are same means
-    // we don;'t have to explicitly mention it in the method near by @path variable
-    // otherwise we have to mention it explicitly
 
     @GetMapping("/category/{category}")
-    public ResponseEntity<List<Question>> getQuestionsByCategory(@PathVariable String category) {
-
-        return questionService.getQuestionsByCategory(category);
-
+    public ResponseEntity<List<QuestionDto>> getQuestionsByCategory(@PathVariable String category)
+    {
+        return  ResponseEntity.ok(questionService.getQuestionsByCategory(category));
     }
-     @PostMapping
-     public ResponseEntity<String>addQuestion( @RequestBody QuestionDto question) {
-       return  questionService.addQuestion(question);
 
+    @PostMapping
+    public ResponseEntity<String>addQuestion(@Valid @RequestBody QuestionDto question)
+    {
+     return ResponseEntity.status(HttpStatus.CREATED).body(questionService.addQuestion(question));
     }
-    @DeleteMapping
-    public ResponseEntity<String> deleteQuestion(@RequestBody QuestionDto question) {
-        return questionService.deleteQuestion(question);
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteQuestion(@PathVariable int id)
+    {
+          questionService.deleteQuestion(id);
+          return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
-    @PutMapping
-    public ResponseEntity<String> updateQuestion(@RequestBody QuestionDto question) {
-        return questionService.updateQuestion(question); // Assuming addQuestion can also handle updates
+
+    @PutMapping("/{id}")
+    public ResponseEntity<QuestionDto> updateQuestion(@PathVariable int id, @Valid @RequestBody QuestionDto question)
+    {
+         return  ResponseEntity.ok(questionService.updateQuestion(id,question));
     }
 
 }
