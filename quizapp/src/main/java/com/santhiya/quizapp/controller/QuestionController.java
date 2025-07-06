@@ -11,13 +11,13 @@ import com.santhiya.quizapp.service.QuestionService;
 import java.util.List;
 
 @RestController
-@RequestMapping("/quizapp")
+@RequestMapping("/questions")
 public class QuestionController {
 
     @Autowired
     QuestionService questionService;
 
-    @GetMapping("/questions")
+    @GetMapping
     public ResponseEntity<List<QuestionDto>> getQuestions()
     {
         return ResponseEntity.ok(questionService.getAllQuestions());
