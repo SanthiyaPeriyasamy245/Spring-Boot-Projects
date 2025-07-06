@@ -1,18 +1,15 @@
 package com.santhiya.quizapp.controller;
 
 import com.santhiya.quizapp.model.QuestionWrapper;
-import com.santhiya.quizapp.model.Quiz;
 import com.santhiya.quizapp.model.Response;
-import com.santhiya.quizapp.repository.QuizRepository;
 import com.santhiya.quizapp.service.QuizService;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/quizCreation")
+@RequestMapping("/quiz")
 public class QuizController {
 
 
