@@ -1,0 +1,11 @@
+
+ @RestController vs @Controller in Thymeleaf Context
+
+@Controller -> Returns a view name (like home.html) that Spring resolves and renders
+
+@RestController | Returns raw data (like JSON, XML, or plain text)
+directly in the response | REST APIs, mobile clients |
+
+
+
+
