@@ -16,11 +16,11 @@ import java.util.List;
 public class TaskController {
 
      private final TaskService taskService;
-    private final AbstractAdvisingBeanPostProcessor abstractAdvisingBeanPostProcessor;
 
-    public TaskController(TaskService taskService, AbstractAdvisingBeanPostProcessor abstractAdvisingBeanPostProcessor) {
+
+    public TaskController(TaskService taskServicer) {
         this.taskService = taskService;
-        this.abstractAdvisingBeanPostProcessor = abstractAdvisingBeanPostProcessor;
+     
     }
 
 
